@@ -338,37 +338,92 @@
         }
 
         @keyframes selectedPulse {
-            0%, 100% {
+            0%, 100% { 
                 box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 215, 0, 0.5);
             }
-            50% {
+            50% { 
                 box-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 70px rgba(255, 215, 0, 0.7);
             }
         }
 
         @keyframes checkmark {
-            0% {
+            0% { 
                 transform: translateY(-50%) scale(0) rotate(-180deg);
                 opacity: 0;
             }
             50% {
                 transform: translateY(-50%) scale(1.3) rotate(0deg);
             }
-            100% {
+            100% { 
                 transform: translateY(-50%) scale(1) rotate(0deg);
                 opacity: 1;
             }
         }
 
         .option-btn.correct {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
             animation: correctPulse 0.6s ease;
-            border: 5px solid #fff;
+            border: 5px solid #fff !important;
+            transform: scale(1.05) !important;
         }
 
         .option-btn.wrong {
-            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%) !important;
             animation: wrongShake 0.6s ease;
+            border: 5px solid #fff !important;
+        }
+
+        /* Icon cho đáp án đúng/sai */
+        .option-btn.correct::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 3em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: checkmarkBounce 0.5s ease;
+        }
+
+        .option-btn.wrong::after {
+            content: '✗';
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 3em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: wrongMark 0.5s ease;
+        }
+
+        @keyframes checkmarkBounce {
+            0% { 
+                transform: translateY(-50%) scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-50%) scale(1.3) rotate(10deg);
+            }
+            100% { 
+                transform: translateY(-50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes wrongMark {
+            0% { 
+                transform: translateY(-50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-50%) scale(1.3);
+            }
+            100% { 
+                transform: translateY(-50%) scale(1);
+                opacity: 1;
+            }
         }
 
         .option-label {
@@ -711,14 +766,14 @@
         }
 
         @keyframes bounceIn {
-            0% {
+            0% { 
                 transform: scale(0);
                 opacity: 0;
             }
-            50% {
+            50% { 
                 transform: scale(1.2);
             }
-            100% {
+            100% { 
                 transform: scale(1);
                 opacity: 1;
             }
@@ -745,21 +800,21 @@
             .header h1 {
                 font-size: 2em;
             }
-
+            
             .question-text {
                 font-size: 1.6em;
                 padding: 15px;
             }
-
+            
             .options-grid {
                 grid-template-columns: 1fr;
             }
-
+            
             .option-btn {
                 font-size: 1.2em;
                 padding: 20px;
             }
-
+            
             .quiz-card {
                 padding: 25px;
             }
@@ -793,650 +848,741 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>🎯 Quiz Học Sinh - Vui Học Mỗi Ngày 🎯</h1>
-        <div class="timer-display">
-            <span id="timer">00:00</span>
-        </div>
-    </div>
-
-    <!-- Màn hình làm quiz -->
-    <div class="quiz-card" id="quizScreen">
-        <div class="progress-section">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar">
-                    <span id="progressText">0%</span>
-                </div>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Quiz Học Sinh - Vui Học Mỗi Ngày 🎯</h1>
+            <div class="timer-display">
+                <span id="timer">00:00</span>
             </div>
         </div>
 
-        <div class="question-header">
-            <div class="question-number" id="questionNumber">Câu hỏi 1/10</div>
-            <button class="submit-top-btn" id="submitTopBtn" onclick="showResults()" style="display: none;">
-                🎉 Xem kết quả
-            </button>
+        <!-- Màn hình làm quiz -->
+        <div class="quiz-card" id="quizScreen">
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar">
+                        <span id="progressText">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-header">
+                <div class="question-number" id="questionNumber">Câu hỏi 1/10</div>
+                <button class="submit-top-btn" id="submitTopBtn" onclick="showResults()" style="display: none;">
+                    🎉 Xem kết quả
+                </button>
+            </div>
+            <div class="question-text" id="questionText"></div>
+
+            <div class="options-grid" id="optionsGrid"></div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()">⬅️ Câu trước</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Câu tiếp ➡️</button>
+            </div>
+
+            <div class="question-list">
+                <h3>Danh sách câu hỏi</h3>
+                <div class="question-dots" id="questionDots"></div>
+            </div>
         </div>
-        <div class="question-text" id="questionText"></div>
 
-        <div class="options-grid" id="optionsGrid"></div>
-
-        <div class="navigation">
-            <button class="nav-btn" id="prevBtn" onclick="prevQuestion()">⬅️ Câu trước</button>
-            <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Câu tiếp ➡️</button>
-        </div>
-
-        <div class="question-list">
-            <h3>Danh sách câu hỏi</h3>
-            <div class="question-dots" id="questionDots"></div>
+        <!-- Màn hình kết quả -->
+        <div class="quiz-card results-screen" id="resultsScreen">
+            <h2 class="results-header">🎊 Kết quả của bạn 🎊</h2>
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="score-message" id="scoreMessage"></div>
+            <div class="time-display" id="totalTime"></div>
+            <div class="results-details" id="resultsDetails"></div>
+            <button class="restart-btn" onclick="restartQuiz()">🔄 Làm lại bài quiz</button>
         </div>
     </div>
 
-    <!-- Màn hình kết quả -->
-    <div class="quiz-card results-screen" id="resultsScreen">
-        <h2 class="results-header">🎊 Kết quả của bạn 🎊</h2>
-        <div class="score-display" id="scoreDisplay"></div>
-        <div class="score-message" id="scoreMessage"></div>
-        <div class="time-display" id="totalTime"></div>
-        <div class="results-details" id="resultsDetails"></div>
-        <button class="restart-btn" onclick="restartQuiz()">🔄 Làm lại bài quiz</button>
-    </div>
-</div>
-
-<script>
-    // ==========================================
-    // DATA MASTER - THÊM CÂU HỎI TẠI ĐÂY
-    // ==========================================
-    const quizData = [
-        // NHÓM 1: Chọn từ cảm xúc đúng sắc thái (6 câu)
-        {
-            question: "Trước khi lên đọc bài trước lớp, tim em đập nhanh, tay hơi lạnh. Từ nào hợp nhất?",
-            options: ["Hân hoan", "Thấp thỏm", "Thư thái", "Tự hào"],
-            correct: 1,
-            explanation: "Thấp thỏm = hồi hộp, lo nhẹ."
-        },
-        {
-            question: "Nhận giấy khen, em cười tươi và muốn khoe với bố mẹ. Từ nào hợp nhất?",
-            options: ["Vui sướng", "Bực bội", "Lo lắng", "Buồn bã"],
-            correct: 0,
-            explanation: "Vui sướng = niềm vui rõ rệt."
-        },
-        {
-            question: "Lỡ làm rơi hộp bút của bạn, em thấy ngại và muốn xin lỗi ngay. Từ nào hợp nhất?",
-            options: ["Hối hận", "Rộn ràng", "Hả hê", "Thản nhiên"],
-            correct: 0,
-            explanation: "Hối hận = thấy mình sai và muốn sửa."
-        },
-        {
-            question: "Bị điểm kém, em im lặng và thấy lòng nặng nề. Từ nào hợp nhất?",
-            options: ["Bâng khuâng", "Vui vẻ", "Thư thái", "Phấn khích"],
-            correct: 0,
-            explanation: "Bâng khuâng = buồn nhẹ, day dứt."
-        },
-        {
-            question: "Nghe bạn thân chuyển trường, em cảm thấy trống vắng. Từ nào hợp nhất?",
-            options: ["Hụt hẫng", "Hân hoan", "Khâm phục", "Hài lòng"],
-            correct: 0,
-            explanation: "Hụt hẫng = mất mát, trống trơn."
-        },
-        {
-            question: "Hoàn thành bài khó, em thở phào và thấy nhẹ cả người. Từ nào hợp nhất?",
-            options: ["Nhẹ nhõm", "Lo lắng", "Tức giận", "Sợ hãi"],
-            correct: 0,
-            explanation: "Nhẹ nhõm = hết căng thẳng."
-        },
-
-        // NHÓM 2: Thay từ để giảm lặp (6 câu)
-        {
-            question: "Chọn từ thay 'vui' phù hợp: 'Em ____ khi đội em chiến thắng.'",
-            options: ["rộn ràng", "rầu rĩ", "bối rối", "bực bội"],
-            correct: 0,
-            explanation: "Rộn ràng = vui náo nức."
-        },
-        {
-            question: "Câu nào tránh lặp từ tốt hơn?",
-            options: [
-                "Em rất vui. Em vui lắm. Em vui vô cùng.",
-                "Em rất vui. Em rộn ràng và phấn khởi.",
-                "Em vui. Em vui. Em vui.",
-                "Em vui lắm. Em vui quá."
-            ],
-            correct: 1,
-            explanation: "Dùng từ khác nhau, rõ sắc thái."
-        },
-        {
-            question: "Thay 'buồn' trong câu: 'Em ____ vì làm bài chưa tốt.'",
-            options: ["bâng khuâng", "hân hoan", "phấn khích", "hả hê"],
-            correct: 0,
-            explanation: "Buồn nhẹ, suy nghĩ."
-        },
-        {
-            question: "Thay 'sợ' cho phù hợp: 'Khi đứng trước lớp, em ____.'",
-            options: ["thấp thỏm", "rộn ràng", "tự hào", "thảnh thơi"],
-            correct: 0,
-            explanation: "Thấp thỏm = hồi hộp, sợ nhẹ."
-        },
-        {
-            question: "Thay 'giận' phù hợp: 'Bạn lấy bút của em mà không xin phép, em thấy ____.'",
-            options: ["khó chịu", "vui vẻ", "hài lòng", "biết ơn"],
-            correct: 0,
-            explanation: "Khó chịu = bực nhẹ."
-        },
-        {
-            question: "Từ nào thay 'tự hào' phù hợp nhất?",
-            options: ["hãnh diện", "sợ hãi", "rầu rĩ", "xấu hổ"],
-            correct: 0,
-            explanation: "Hãnh diện gần nghĩa tự hào."
-        },
-
-        // NHÓM 3: Chọn chi tiết trải nghiệm phù hợp (6 câu)
-        {
-            question: "Đoạn văn đang viết về 'hồi hộp trước khi đọc bài'. Chi tiết nào phù hợp nhất?",
-            options: [
-                "Tim đập nhanh, tay hơi lạnh",
-                "Bầu trời hôm nay rất đẹp",
-                "Em ăn cơm rất ngon",
-                "Nhà em có một con mèo"
-            ],
-            correct: 0,
-            explanation: "Chi tiết gắn cảm xúc hồi hộp."
-        },
-        {
-            question: "Đoạn văn viết về 'niềm vui giờ ra chơi'. Chi tiết nào làm đoạn văn sinh động hơn?",
-            options: [
-                "Tiếng cười vang, bóng nảy thình thịch",
-                "Em thích ngủ trưa",
-                "Em có nhiều sách ở nhà",
-                "Em không thích trời mưa"
-            ],
-            correct: 0,
-            explanation: "Âm thanh, hoạt động cụ thể."
-        },
-        {
-            question: "Viết về 'tham quan bảo tàng'. Chi tiết nào hợp nhất?",
-            options: [
-                "Hoa văn chạm khắc trên đá rất tinh xảo",
-                "Em đá bóng ngoài sân",
-                "Em mua kem ở cổng trường",
-                "Em xem phim ở nhà"
-            ],
-            correct: 0,
-            explanation: "Đúng bối cảnh trải nghiệm."
-        },
-        {
-            question: "Viết về 'xin lỗi và hoà giải'. Chi tiết nào hợp nhất?",
-            options: [
-                "Em nói xin lỗi, bạn gật đầu và mỉm cười",
-                "Em kể về món ăn em thích",
-                "Em nhìn thấy cầu vồng",
-                "Em nghe bài hát trên tivi"
-            ],
-            correct: 0,
-            explanation: "Hành động thể hiện hoà giải."
-        },
-        {
-            question: "Viết về 'vượt qua nỗi sợ'. Chi tiết nào cho thấy sự chuyển biến tốt?",
-            options: [
-                "Ban đầu run, sau đó hít thở sâu và đọc rõ",
-                "Em về nhà ăn cơm",
-                "Em ngủ rất lâu",
-                "Em mua bút mới"
-            ],
-            correct: 0,
-            explanation: "Có trước–sau, thể hiện vượt sợ."
-        },
-        {
-            question: "Chi tiết nào thuộc giác quan (nhìn/nghe/ngửi/chạm/nếm) phù hợp để tả cảm xúc?",
-            options: [
-                "Mùi mưa ngai ngái làm em nhớ kỷ niệm",
-                "Em có rất nhiều đồ chơi",
-                "Em muốn làm bác sĩ",
-                "Em học lớp 4"
-            ],
-            correct: 0,
-            explanation: "Chi tiết cảm giác gợi cảm xúc."
-        },
-
-        // NHÓM 4: Chọn câu kết hay/đúng mục đích (6 câu)
-        {
-            question: "Đoạn văn kể về 'giúp bạn nhặt thước'. Câu kết nào phù hợp nhất?",
-            options: [
-                "Em mong lớp em ai cũng biết quan tâm nhau.",
-                "Em có một cái cặp mới.",
-                "Hôm nay trời nắng.",
-                "Em thích ăn bánh."
-            ],
-            correct: 0,
-            explanation: "Kết bằng ước mong/bài học."
-        },
-        {
-            question: "Đoạn văn viết về 'vượt qua nỗi sợ đọc bài'. Câu kết nào đúng?",
-            options: [
-                "Em nhận ra nỗi sợ sẽ nhỏ lại khi em dám thử.",
-                "Em về nhà chơi game.",
-                "Em không thích viết văn.",
-                "Em muốn có thêm bút màu."
-            ],
-            correct: 0,
-            explanation: "Kết bằng nhận ra."
-        },
-        {
-            question: "Đoạn văn tả 'giờ ra chơi rộn ràng'. Câu kết nào hay?",
-            options: [
-                "Em mong mỗi ngày đến trường đều vui như vậy.",
-                "Em thích bánh mì.",
-                "Nhà em có nhiều cây.",
-                "Em không biết viết gì."
-            ],
-            correct: 0,
-            explanation: "Kết gắn cảm xúc, đúng chủ đề."
-        },
-        {
-            question: "Đoạn văn kể 'lỡ làm bạn buồn và đã xin lỗi'. Câu kết nào đúng mục đích?",
-            options: [
-                "Em hiểu rằng xin lỗi sớm sẽ giữ tình bạn tốt hơn.",
-                "Em sẽ mua đồ chơi mới.",
-                "Em muốn nghỉ học.",
-                "Em không quan tâm nữa."
-            ],
-            correct: 0,
-            explanation: "Bài học rõ ràng."
-        },
-        {
-            question: "Đoạn văn 'tham quan bảo tàng Chăm'. Câu kết nào phù hợp?",
-            options: [
-                "Em muốn tìm hiểu thêm về lịch sử và văn hoá quê hương.",
-                "Em thích ăn kem.",
-                "Em ghét trời mưa.",
-                "Em ngủ rất ngon."
-            ],
-            correct: 0,
-            explanation: "Kết bằng mong muốn học hỏi."
-        },
-        {
-            question: "Câu kết nào không phù hợp với đoạn văn cảm xúc?",
-            options: [
-                "Em nhận ra mình cần cố gắng hơn.",
-                "Em mong lần sau em tự tin hơn.",
-                "Rồi hết.",
-                "Em thấy lòng mình ấm áp."
-            ],
-            correct: 2,
-            explanation: "Kết cụt, không có ý nghĩa."
-        }
-    ];
-
-    // ==========================================
-    // BIẾN TOÀN CỤC
-    // ==========================================
-    let currentQuestion = 0;
-    let userAnswers = new Array(quizData.length).fill(null);
-    let startTime = Date.now();
-    let timerInterval;
-
-    // ==========================================
-    // KHỞI TẠO QUIZ
-    // ==========================================
-    function initQuiz() {
-        startTimer();
-        renderQuestion();
-        renderQuestionDots();
-        updateNavigation();
-    }
-
-    // ==========================================
-    // ĐỒNG HỒ ĐẾM THỜI GIAN
-    // ==========================================
-    function startTimer() {
-        timerInterval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            document.getElementById('timer').textContent =
-                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }, 1000);
-    }
-
-    // ==========================================
-    // HIỂN THỊ CÂU HỎI
-    // ==========================================
-    function renderQuestion() {
-        const question = quizData[currentQuestion];
-
-        // Cập nhật số thứ tự câu hỏi
-        document.getElementById('questionNumber').textContent =
-            `Câu hỏi ${currentQuestion + 1}/${quizData.length}`;
-
-        // Cập nhật nội dung câu hỏi
-        document.getElementById('questionText').textContent = question.question;
-
-        // Cập nhật thanh tiến độ theo số câu đã trả lời
-        const answeredCount = userAnswers.filter(answer => answer !== null).length;
-        const progress = (answeredCount / quizData.length) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressText').textContent =
-            `${answeredCount}/${quizData.length} (${Math.round(progress)}%)`;
-
-        // Tạo các nút đáp án
-        const optionsGrid = document.getElementById('optionsGrid');
-        optionsGrid.innerHTML = '';
-
-        const labels = ['A', 'B', 'C', 'D'];
-        question.options.forEach((option, index) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerHTML = `<span class="option-label">${labels[index]}</span>${option}`;
-            btn.onclick = () => selectAnswer(index);
-
-            // Đánh dấu nếu đã chọn
-            if (userAnswers[currentQuestion] === index) {
-                btn.classList.add('selected');
+    <script>
+        // ==========================================
+        // DATA MASTER - THÊM CÂU HỎI TẠI ĐÂY
+        // ==========================================
+        const quizData = [
+            // NHÓM 1: Chọn từ cảm xúc đúng sắc thái (6 câu)
+            {
+                question: "Trước khi lên đọc bài trước lớp, tim em đập nhanh, tay hơi lạnh. Từ nào hợp nhất?",
+                options: ["Hân hoan", "Thấp thỏm", "Thư thái", "Tự hào"],
+                correct: 1,
+                explanation: "Thấp thỏm = hồi hộp, lo nhẹ."
+            },
+            {
+                question: "Nhận giấy khen, em cười tươi và muốn khoe với bố mẹ. Từ nào hợp nhất?",
+                options: ["Vui sướng", "Bực bội", "Lo lắng", "Buồn bã"],
+                correct: 0,
+                explanation: "Vui sướng = niềm vui rõ rệt."
+            },
+            {
+                question: "Lỡ làm rơi hộp bút của bạn, em thấy ngại và muốn xin lỗi ngay. Từ nào hợp nhất?",
+                options: ["Hối hận", "Rộn ràng", "Hả hê", "Thản nhiên"],
+                correct: 0,
+                explanation: "Hối hận = thấy mình sai và muốn sửa."
+            },
+            {
+                question: "Bị điểm kém, em im lặng và thấy lòng nặng nề. Từ nào hợp nhất?",
+                options: ["Bâng khuâng", "Vui vẻ", "Thư thái", "Phấn khích"],
+                correct: 0,
+                explanation: "Bâng khuâng = buồn nhẹ, day dứt."
+            },
+            {
+                question: "Nghe bạn thân chuyển trường, em cảm thấy trống vắng. Từ nào hợp nhất?",
+                options: ["Hụt hẫng", "Hân hoan", "Khâm phục", "Hài lòng"],
+                correct: 0,
+                explanation: "Hụt hẫng = mất mát, trống trơn."
+            },
+            {
+                question: "Hoàn thành bài khó, em thở phào và thấy nhẹ cả người. Từ nào hợp nhất?",
+                options: ["Nhẹ nhõm", "Lo lắng", "Tức giận", "Sợ hãi"],
+                correct: 0,
+                explanation: "Nhẹ nhõm = hết căng thẳng."
+            },
+            
+            // NHÓM 2: Thay từ để giảm lặp (6 câu)
+            {
+                question: "Chọn từ thay 'vui' phù hợp: 'Em ____ khi đội em chiến thắng.'",
+                options: ["rộn ràng", "rầu rĩ", "bối rối", "bực bội"],
+                correct: 0,
+                explanation: "Rộn ràng = vui náo nức."
+            },
+            {
+                question: "Câu nào tránh lặp từ tốt hơn?",
+                options: [
+                    "Em rất vui. Em vui lắm. Em vui vô cùng.",
+                    "Em rất vui. Em rộn ràng và phấn khởi.",
+                    "Em vui. Em vui. Em vui.",
+                    "Em vui lắm. Em vui quá."
+                ],
+                correct: 1,
+                explanation: "Dùng từ khác nhau, rõ sắc thái."
+            },
+            {
+                question: "Thay 'buồn' trong câu: 'Em ____ vì làm bài chưa tốt.'",
+                options: ["bâng khuâng", "hân hoan", "phấn khích", "hả hê"],
+                correct: 0,
+                explanation: "Buồn nhẹ, suy nghĩ."
+            },
+            {
+                question: "Thay 'sợ' cho phù hợp: 'Khi đứng trước lớp, em ____.'",
+                options: ["thấp thỏm", "rộn ràng", "tự hào", "thảnh thơi"],
+                correct: 0,
+                explanation: "Thấp thỏm = hồi hộp, sợ nhẹ."
+            },
+            {
+                question: "Thay 'giận' phù hợp: 'Bạn lấy bút của em mà không xin phép, em thấy ____.'",
+                options: ["khó chịu", "vui vẻ", "hài lòng", "biết ơn"],
+                correct: 0,
+                explanation: "Khó chịu = bực nhẹ."
+            },
+            {
+                question: "Từ nào thay 'tự hào' phù hợp nhất?",
+                options: ["hãnh diện", "sợ hãi", "rầu rĩ", "xấu hổ"],
+                correct: 0,
+                explanation: "Hãnh diện gần nghĩa tự hào."
+            },
+            
+            // NHÓM 3: Chọn chi tiết trải nghiệm phù hợp (6 câu)
+            {
+                question: "Đoạn văn đang viết về 'hồi hộp trước khi đọc bài'. Chi tiết nào phù hợp nhất?",
+                options: [
+                    "Tim đập nhanh, tay hơi lạnh",
+                    "Bầu trời hôm nay rất đẹp",
+                    "Em ăn cơm rất ngon",
+                    "Nhà em có một con mèo"
+                ],
+                correct: 0,
+                explanation: "Chi tiết gắn cảm xúc hồi hộp."
+            },
+            {
+                question: "Đoạn văn viết về 'niềm vui giờ ra chơi'. Chi tiết nào làm đoạn văn sinh động hơn?",
+                options: [
+                    "Tiếng cười vang, bóng nảy thình thịch",
+                    "Em thích ngủ trưa",
+                    "Em có nhiều sách ở nhà",
+                    "Em không thích trời mưa"
+                ],
+                correct: 0,
+                explanation: "Âm thanh, hoạt động cụ thể."
+            },
+            {
+                question: "Viết về 'tham quan bảo tàng'. Chi tiết nào hợp nhất?",
+                options: [
+                    "Hoa văn chạm khắc trên đá rất tinh xảo",
+                    "Em đá bóng ngoài sân",
+                    "Em mua kem ở cổng trường",
+                    "Em xem phim ở nhà"
+                ],
+                correct: 0,
+                explanation: "Đúng bối cảnh trải nghiệm."
+            },
+            {
+                question: "Viết về 'xin lỗi và hoà giải'. Chi tiết nào hợp nhất?",
+                options: [
+                    "Em nói xin lỗi, bạn gật đầu và mỉm cười",
+                    "Em kể về món ăn em thích",
+                    "Em nhìn thấy cầu vồng",
+                    "Em nghe bài hát trên tivi"
+                ],
+                correct: 0,
+                explanation: "Hành động thể hiện hoà giải."
+            },
+            {
+                question: "Viết về 'vượt qua nỗi sợ'. Chi tiết nào cho thấy sự chuyển biến tốt?",
+                options: [
+                    "Ban đầu run, sau đó hít thở sâu và đọc rõ",
+                    "Em về nhà ăn cơm",
+                    "Em ngủ rất lâu",
+                    "Em mua bút mới"
+                ],
+                correct: 0,
+                explanation: "Có trước–sau, thể hiện vượt sợ."
+            },
+            {
+                question: "Chi tiết nào thuộc giác quan (nhìn/nghe/ngửi/chạm/nếm) phù hợp để tả cảm xúc?",
+                options: [
+                    "Mùi mưa ngai ngái làm em nhớ kỷ niệm",
+                    "Em có rất nhiều đồ chơi",
+                    "Em muốn làm bác sĩ",
+                    "Em học lớp 4"
+                ],
+                correct: 0,
+                explanation: "Chi tiết cảm giác gợi cảm xúc."
+            },
+            
+            // NHÓM 4: Chọn câu kết hay/đúng mục đích (6 câu)
+            {
+                question: "Đoạn văn kể về 'giúp bạn nhặt thước'. Câu kết nào phù hợp nhất?",
+                options: [
+                    "Em mong lớp em ai cũng biết quan tâm nhau.",
+                    "Em có một cái cặp mới.",
+                    "Hôm nay trời nắng.",
+                    "Em thích ăn bánh."
+                ],
+                correct: 0,
+                explanation: "Kết bằng ước mong/bài học."
+            },
+            {
+                question: "Đoạn văn viết về 'vượt qua nỗi sợ đọc bài'. Câu kết nào đúng?",
+                options: [
+                    "Em nhận ra nỗi sợ sẽ nhỏ lại khi em dám thử.",
+                    "Em về nhà chơi game.",
+                    "Em không thích viết văn.",
+                    "Em muốn có thêm bút màu."
+                ],
+                correct: 0,
+                explanation: "Kết bằng nhận ra."
+            },
+            {
+                question: "Đoạn văn tả 'giờ ra chơi rộn ràng'. Câu kết nào hay?",
+                options: [
+                    "Em mong mỗi ngày đến trường đều vui như vậy.",
+                    "Em thích bánh mì.",
+                    "Nhà em có nhiều cây.",
+                    "Em không biết viết gì."
+                ],
+                correct: 0,
+                explanation: "Kết gắn cảm xúc, đúng chủ đề."
+            },
+            {
+                question: "Đoạn văn kể 'lỡ làm bạn buồn và đã xin lỗi'. Câu kết nào đúng mục đích?",
+                options: [
+                    "Em hiểu rằng xin lỗi sớm sẽ giữ tình bạn tốt hơn.",
+                    "Em sẽ mua đồ chơi mới.",
+                    "Em muốn nghỉ học.",
+                    "Em không quan tâm nữa."
+                ],
+                correct: 0,
+                explanation: "Bài học rõ ràng."
+            },
+            {
+                question: "Đoạn văn 'tham quan bảo tàng Chăm'. Câu kết nào phù hợp?",
+                options: [
+                    "Em muốn tìm hiểu thêm về lịch sử và văn hoá quê hương.",
+                    "Em thích ăn kem.",
+                    "Em ghét trời mưa.",
+                    "Em ngủ rất ngon."
+                ],
+                correct: 0,
+                explanation: "Kết bằng mong muốn học hỏi."
+            },
+            {
+                question: "Câu kết nào không phù hợp với đoạn văn cảm xúc?",
+                options: [
+                    "Em nhận ra mình cần cố gắng hơn.",
+                    "Em mong lần sau em tự tin hơn.",
+                    "Rồi hết.",
+                    "Em thấy lòng mình ấm áp."
+                ],
+                correct: 2,
+                explanation: "Kết cụt, không có ý nghĩa."
             }
+        ];
 
-            optionsGrid.appendChild(btn);
-        });
+        // ==========================================
+        // BIẾN TOÀN CỤC
+        // ==========================================
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let startTime = Date.now();
+        let timerInterval;
 
-        // Cập nhật danh sách câu hỏi
-        updateQuestionDots();
-    }
-
-    // ==========================================
-    // CHỌN ĐÁP ÁN
-    // ==========================================
-    function selectAnswer(index) {
-        userAnswers[currentQuestion] = index;
-
-        // Phát âm thanh khi chọn
-        playSound('select');
-
-        // Cập nhật giao diện
-        const buttons = document.querySelectorAll('.option-btn');
-        buttons.forEach((btn, i) => {
-            btn.classList.remove('selected');
-            if (i === index) {
-                btn.classList.add('selected');
-            }
-        });
-
-        // Cập nhật thanh tiến độ
-        const answeredCount = userAnswers.filter(answer => answer !== null).length;
-        const progress = (answeredCount / quizData.length) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressText').textContent =
-            `${answeredCount}/${quizData.length} (${Math.round(progress)}%)`;
-
-        // Cập nhật danh sách câu hỏi
-        updateQuestionDots();
-        updateNavigation();
-    }
-
-    // ==========================================
-    // HIỂN THỊ DANH SÁCH CÂU HỎI
-    // ==========================================
-    function renderQuestionDots() {
-        const dotsContainer = document.getElementById('questionDots');
-        dotsContainer.innerHTML = '';
-
-        quizData.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = 'question-dot';
-            dot.textContent = index + 1;
-            dot.onclick = () => goToQuestion(index);
-            dotsContainer.appendChild(dot);
-        });
-
-        updateQuestionDots();
-    }
-
-    function updateQuestionDots() {
-        const dots = document.querySelectorAll('.question-dot');
-        dots.forEach((dot, index) => {
-            dot.classList.remove('current', 'answered');
-
-            if (index === currentQuestion) {
-                dot.classList.add('current');
-            } else if (userAnswers[index] !== null) {
-                dot.classList.add('answered');
-            }
-        });
-    }
-
-    // ==========================================
-    // ĐIỀU HƯỚNG
-    // ==========================================
-    function goToQuestion(index) {
-        currentQuestion = index;
-        renderQuestion();
-        updateNavigation();
-        playSound('select');
-    }
-
-    function prevQuestion() {
-        if (currentQuestion > 0) {
-            currentQuestion--;
+        // ==========================================
+        // KHỞI TẠO QUIZ
+        // ==========================================
+        function initQuiz() {
+            startTimer();
             renderQuestion();
+            renderQuestionDots();
             updateNavigation();
-            playSound('navigate');
         }
-    }
 
-    function nextQuestion() {
-        if (currentQuestion < quizData.length - 1) {
-            currentQuestion++;
-            renderQuestion();
-            updateNavigation();
-            playSound('navigate');
+        // ==========================================
+        // ĐỒNG HỒ ĐẾM THỜI GIAN
+        // ==========================================
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
         }
-    }
 
-    function updateNavigation() {
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitTopBtn = document.getElementById('submitTopBtn');
-
-        // Nút Câu trước - disable nếu đang ở câu đầu
-        prevBtn.disabled = currentQuestion === 0;
-
-        // Nút Câu tiếp - disable nếu đang ở câu cuối
-        nextBtn.disabled = currentQuestion === quizData.length - 1;
-
-        // Kiểm tra đã trả lời hết chưa
-        const allAnswered = userAnswers.every(answer => answer !== null);
-
-        // Hiển thị nút "Xem kết quả" ở trên nếu đã làm hết
-        if (allAnswered) {
-            submitTopBtn.style.display = 'inline-block';
-        } else {
-            submitTopBtn.style.display = 'none';
-        }
-    }
-
-    // ==========================================
-    // HIỂN THỊ KẾT QUẢ
-    // ==========================================
-    function showResults() {
-        // Dừng đồng hồ
-        clearInterval(timerInterval);
-        const totalTime = Math.floor((Date.now() - startTime) / 1000);
-        const minutes = Math.floor(totalTime / 60);
-        const seconds = totalTime % 60;
-
-        // Tính điểm
-        let correctCount = 0;
-        quizData.forEach((q, index) => {
-            if (userAnswers[index] === q.correct) {
-                correctCount++;
-            }
-        });
-
-        const score = Math.round((correctCount / quizData.length) * 100);
-
-        // Ẩn màn quiz, hiện màn kết quả
-        document.getElementById('quizScreen').style.display = 'none';
-        document.getElementById('resultsScreen').classList.add('active');
-
-        // Hiển thị điểm
-        document.getElementById('scoreDisplay').textContent = `${correctCount}/${quizData.length}`;
-        document.getElementById('totalTime').textContent =
-            `Thời gian hoàn thành: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-        // Thông điệp khuyến khích
-        let message = '';
-        if (score === 100) {
-            message = '🌟 Xuất sắc! Bạn làm đúng tất cả!';
-            createConfetti();
-            playSound('perfect');
-        } else if (score >= 80) {
-            message = '👏 Tuyệt vời! Bạn làm rất tốt!';
-            playSound('success');
-        } else if (score >= 60) {
-            message = '😊 Khá tốt! Tiếp tục cố gắng nhé!';
-            playSound('success');
-        } else {
-            message = '💪 Cố gắng lên! Bạn sẽ làm tốt hơn lần sau!';
-            playSound('success');
-        }
-        document.getElementById('scoreMessage').textContent = message;
-
-        // Hiển thị chi tiết từng câu
-        const detailsContainer = document.getElementById('resultsDetails');
-        detailsContainer.innerHTML = '<h3>📝 Chi tiết từng câu hỏi</h3>';
-
-        quizData.forEach((q, index) => {
-            const isCorrect = userAnswers[index] === q.correct;
+        // ==========================================
+        // HIỂN THỊ CÂU HỎI
+        // ==========================================
+        function renderQuestion() {
+            const question = quizData[currentQuestion];
+            
+            // Cập nhật số thứ tự câu hỏi
+            document.getElementById('questionNumber').textContent = 
+                `Câu hỏi ${currentQuestion + 1}/${quizData.length}`;
+            
+            // Cập nhật nội dung câu hỏi
+            document.getElementById('questionText').textContent = question.question;
+            
+            // Cập nhật thanh tiến độ theo số câu đã trả lời
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const progress = (answeredCount / quizData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `${answeredCount}/${quizData.length} (${Math.round(progress)}%)`;
+            
+            // Tạo các nút đáp án
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
             const labels = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="option-label">${labels[index]}</span>${option}`;
+                btn.onclick = () => selectAnswer(index);
+                
+                // Nếu câu này đã được trả lời, hiển thị kết quả
+                if (userAnswers[currentQuestion] !== null) {
+                    btn.style.pointerEvents = 'none';
+                    
+                    // Hiển thị đáp án đúng
+                    if (index === question.correct) {
+                        btn.classList.add('correct');
+                    }
+                    
+                    // Hiển thị đáp án sai nếu đã chọn sai
+                    if (index === userAnswers[currentQuestion] && userAnswers[currentQuestion] !== question.correct) {
+                        btn.classList.add('wrong');
+                    }
+                } else {
+                    btn.style.pointerEvents = 'auto';
+                }
+                
+                optionsGrid.appendChild(btn);
+            });
+            
+            // Cập nhật danh sách câu hỏi
+            updateQuestionDots();
+        }
 
-            const item = document.createElement('div');
-            item.className = `result-item ${isCorrect ? 'correct' : 'wrong'}`;
+        // ==========================================
+        // CHỌN ĐÁP ÁN
+        // ==========================================
+        function selectAnswer(index) {
+            // Nếu đã chọn rồi thì không cho chọn lại
+            if (userAnswers[currentQuestion] !== null) {
+                return;
+            }
+            
+            userAnswers[currentQuestion] = index;
+            const question = quizData[currentQuestion];
+            const isCorrect = index === question.correct;
+            
+            // Cập nhật giao diện
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.remove('selected');
+                btn.style.pointerEvents = 'none'; // Không cho click vào các đáp án khác
+                
+                // Hiển thị đáp án đúng
+                if (i === question.correct) {
+                    btn.classList.add('correct');
+                }
+                
+                // Hiển thị đáp án sai nếu chọn sai
+                if (i === index && !isCorrect) {
+                    btn.classList.add('wrong');
+                }
+            });
+            
+            // Phát âm thanh tương ứng
+            if (isCorrect) {
+                playSound('correct');
+                // Hiệu ứng confetti nhỏ cho câu đúng
+                createMiniConfetti();
+            } else {
+                playSound('wrong');
+            }
+            
+            // Cập nhật thanh tiến độ
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const progress = (answeredCount / quizData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `${answeredCount}/${quizData.length} (${Math.round(progress)}%)`;
+            
+            // Cập nhật danh sách câu hỏi
+            updateQuestionDots();
+            updateNavigation();
+        }
 
-            let html = `
+        // ==========================================
+        // HIỂN THỊ DANH SÁCH CÂU HỎI
+        // ==========================================
+        function renderQuestionDots() {
+            const dotsContainer = document.getElementById('questionDots');
+            dotsContainer.innerHTML = '';
+            
+            quizData.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'question-dot';
+                dot.textContent = index + 1;
+                dot.onclick = () => goToQuestion(index);
+                dotsContainer.appendChild(dot);
+            });
+            
+            updateQuestionDots();
+        }
+
+        function updateQuestionDots() {
+            const dots = document.querySelectorAll('.question-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('current', 'answered');
+                
+                if (index === currentQuestion) {
+                    dot.classList.add('current');
+                } else if (userAnswers[index] !== null) {
+                    dot.classList.add('answered');
+                }
+            });
+        }
+
+        // ==========================================
+        // ĐIỀU HƯỚNG
+        // ==========================================
+        function goToQuestion(index) {
+            currentQuestion = index;
+            renderQuestion();
+            updateNavigation();
+            playSound('select');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+                updateNavigation();
+                playSound('navigate');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+                updateNavigation();
+                playSound('navigate');
+            }
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitTopBtn = document.getElementById('submitTopBtn');
+            
+            // Nút Câu trước - disable nếu đang ở câu đầu
+            prevBtn.disabled = currentQuestion === 0;
+            
+            // Nút Câu tiếp - disable nếu đang ở câu cuối
+            nextBtn.disabled = currentQuestion === quizData.length - 1;
+            
+            // Kiểm tra đã trả lời hết chưa
+            const allAnswered = userAnswers.every(answer => answer !== null);
+            
+            // Hiển thị nút "Xem kết quả" ở trên nếu đã làm hết
+            if (allAnswered) {
+                submitTopBtn.style.display = 'inline-block';
+            } else {
+                submitTopBtn.style.display = 'none';
+            }
+        }
+
+        // ==========================================
+        // HIỂN THỊ KẾT QUẢ
+        // ==========================================
+        function showResults() {
+            // Dừng đồng hồ
+            clearInterval(timerInterval);
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            
+            // Tính điểm
+            let correctCount = 0;
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.correct) {
+                    correctCount++;
+                }
+            });
+            
+            const score = Math.round((correctCount / quizData.length) * 100);
+            
+            // Ẩn màn quiz, hiện màn kết quả
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('resultsScreen').classList.add('active');
+            
+            // Hiển thị điểm
+            document.getElementById('scoreDisplay').textContent = `${correctCount}/${quizData.length}`;
+            document.getElementById('totalTime').textContent = 
+                `Thời gian hoàn thành: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            // Thông điệp khuyến khích
+            let message = '';
+            if (score === 100) {
+                message = '🌟 Xuất sắc! Bạn làm đúng tất cả!';
+                createConfetti();
+                playSound('perfect');
+            } else if (score >= 80) {
+                message = '👏 Tuyệt vời! Bạn làm rất tốt!';
+                playSound('success');
+            } else if (score >= 60) {
+                message = '😊 Khá tốt! Tiếp tục cố gắng nhé!';
+                playSound('success');
+            } else {
+                message = '💪 Cố gắng lên! Bạn sẽ làm tốt hơn lần sau!';
+                playSound('success');
+            }
+            document.getElementById('scoreMessage').textContent = message;
+            
+            // Hiển thị chi tiết từng câu
+            const detailsContainer = document.getElementById('resultsDetails');
+            detailsContainer.innerHTML = '<h3>📝 Chi tiết từng câu hỏi</h3>';
+            
+            quizData.forEach((q, index) => {
+                const isCorrect = userAnswers[index] === q.correct;
+                const labels = ['A', 'B', 'C', 'D'];
+                
+                const item = document.createElement('div');
+                item.className = `result-item ${isCorrect ? 'correct' : 'wrong'}`;
+                
+                let html = `
                     <div class="result-question">Câu ${index + 1}: ${q.question}</div>
                 `;
-
-            if (isCorrect) {
-                html += `<div class="result-correct-mark">${labels[q.correct]}. ${q.options[q.correct]}</div>`;
-            } else {
-                html += `
+                
+                if (isCorrect) {
+                    html += `<div class="result-correct-mark">${labels[q.correct]}. ${q.options[q.correct]}</div>`;
+                } else {
+                    html += `
                         <div class="your-answer">${labels[userAnswers[index]]}. ${q.options[userAnswers[index]]}</div>
                         <div class="correct-answer">${labels[q.correct]}. ${q.options[q.correct]}</div>
                     `;
-            }
-
-            if (q.explanation) {
-                html += `<div class="explanation">${q.explanation}</div>`;
-            }
-
-            item.innerHTML = html;
-            detailsContainer.appendChild(item);
-        });
-    }
-
-    // ==========================================
-    // LÀM LẠI QUIZ
-    // ==========================================
-    function restartQuiz() {
-        currentQuestion = 0;
-        userAnswers = new Array(quizData.length).fill(null);
-        startTime = Date.now();
-
-        document.getElementById('resultsScreen').classList.remove('active');
-        document.getElementById('quizScreen').style.display = 'block';
-
-        initQuiz();
-        playSound('navigate');
-    }
-
-    // ==========================================
-    // ÂM THANH (Web Audio API)
-    // ==========================================
-    function playSound(type) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        switch(type) {
-            case 'select':
-                oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-                break;
-
-            case 'navigate':
-                oscillator.frequency.value = 600;
-                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.15);
-                break;
-
-            case 'success':
-                // Âm thanh thành công (3 nốt tăng dần)
-                [523, 659, 784].forEach((freq, i) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.2);
-                    osc.start(audioContext.currentTime + i * 0.1);
-                    osc.stop(audioContext.currentTime + i * 0.1 + 0.2);
-                });
-                break;
-
-            case 'perfect':
-                // Âm thanh hoàn hảo (5 nốt vui vẻ)
-                [523, 659, 784, 880, 1047].forEach((freq, i) => {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0.15, audioContext.currentTime + i * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.08 + 0.15);
-                    osc.start(audioContext.currentTime + i * 0.08);
-                    osc.stop(audioContext.currentTime + i * 0.08 + 0.15);
-                });
-                break;
+                }
+                
+                if (q.explanation) {
+                    html += `<div class="explanation">${q.explanation}</div>`;
+                }
+                
+                item.innerHTML = html;
+                detailsContainer.appendChild(item);
+            });
         }
-    }
 
-    // ==========================================
-    // HIỆU ỨNG CONFETTI
-    // ==========================================
-    function createConfetti() {
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-        const confettiCount = 50;
+        // ==========================================
+        // LÀM LẠI QUIZ
+        // ==========================================
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            startTime = Date.now();
+            
+            document.getElementById('resultsScreen').classList.remove('active');
+            document.getElementById('quizScreen').style.display = 'block';
+            
+            initQuiz();
+            playSound('navigate');
+        }
 
-        for (let i = 0; i < confettiCount; i++) {
-            setTimeout(() => {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * window.innerWidth + 'px';
-                confetti.style.top = '-10px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = (Math.random() * 10 + 5) + 'px';
-                confetti.style.height = confetti.style.width;
-                confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear`;
+        // ==========================================
+        // ÂM THANH (Web Audio API)
+        // ==========================================
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'select':
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                    
+                case 'navigate':
+                    oscillator.frequency.value = 600;
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+                
+                case 'correct':
+                    // Âm thanh chúc mừng vui vẻ - giai điệu vui (Do-Mi-Sol-Do cao)
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.3, audioContext.currentTime + i * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.3);
+                        osc.start(audioContext.currentTime + i * 0.1);
+                        osc.stop(audioContext.currentTime + i * 0.1 + 0.3);
+                    });
+                    break;
+                
+                case 'wrong':
+                    // Âm thanh tiếc nuối buồn - giai điệu đi xuống (Sol-Mi-Do)
+                    [783.99, 659.25, 523.25].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle'; // Âm buồn hơn
+                        gain.gain.setValueAtTime(0.25, audioContext.currentTime + i * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.4);
+                        osc.start(audioContext.currentTime + i * 0.15);
+                        osc.stop(audioContext.currentTime + i * 0.15 + 0.4);
+                    });
+                    break;
+                    
+                case 'success':
+                    // Âm thanh thành công (3 nốt tăng dần)
+                    [523, 659, 784].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.2);
+                        osc.start(audioContext.currentTime + i * 0.1);
+                        osc.stop(audioContext.currentTime + i * 0.1 + 0.2);
+                    });
+                    break;
+                    
+                case 'perfect':
+                    // Âm thanh hoàn hảo (5 nốt vui vẻ)
+                    [523, 659, 784, 880, 1047].forEach((freq, i) => {
+                        const osc = audioContext.createOscillator();
+                        const gain = audioContext.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioContext.destination);
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.15, audioContext.currentTime + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.08 + 0.15);
+                        osc.start(audioContext.currentTime + i * 0.08);
+                        osc.stop(audioContext.currentTime + i * 0.08 + 0.15);
+                    });
+                    break;
+            }
+        }
 
-                document.body.appendChild(confetti);
-
+        // ==========================================
+        // HIỆU ỨNG CONFETTI
+        // ==========================================
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
                 setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
-            }, i * 30);
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 30);
+            }
         }
-    }
 
-    // ==========================================
-    // KHỞI ĐỘNG KHI TRANG TẢI XONG
-    // ==========================================
-    window.onload = initQuiz;
-</script>
+        // Confetti nhỏ khi trả lời đúng từng câu
+        function createMiniConfetti() {
+            const colors = ['#FFD700', '#FFA500', '#FF69B4', '#00CED1', '#32CD32'];
+            const confettiCount = 15;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = (window.innerWidth / 2 + (Math.random() - 0.5) * 400) + 'px';
+                    confetti.style.top = '20%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (Math.random() * 8 + 4) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animation = `confetti-fall ${Math.random() * 2 + 1.5}s linear`;
+                    confetti.style.position = 'fixed';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3500);
+                }, i * 40);
+            }
+        }
+
+        // ==========================================
+        // KHỞI ĐỘNG KHI TRANG TẢI XONG
+        // ==========================================
+        window.onload = initQuiz;
+    </script>
 </body>
 </html>
